@@ -32,15 +32,22 @@ git push -u origin main
 
 ## Before publishing
 
+- Replace `assets/images/profile.jpg` with the intended portrait photograph.
+- Add project images to the matching folder under `assets/images/`.
+- Add project videos to the matching folder under `assets/videos/`, then uncomment or update the labeled HTML5 video source in `index.html`.
 - Add dates to the Engineering Experience section if you want them displayed.
 - Replace or expand project descriptions as you complete more testing.
-- Add project photographs, CAD renders, PCB screenshots, or short demo clips when available.
 - Keep private/sensitive code or project material out of the public repository.
 - Confirm that the résumé PDF in `assets/` is the version you want recruiters to download.
 
-## Suggested future upgrades
+## Project media folders
 
-- Add a dedicated project gallery page with UAV CAD renders and hardware photos.
-- Link each project to a GitHub repository when the code is ready to share publicly.
-- Add short demo videos for the UAV, zoom/focus controller, and quadcopter controller.
-- Add a custom domain later if desired.
+Each detailed project overlay includes labeled placeholders and HTML comments for future media. Matching image and video folders are available for:
+
+- `uav`
+- `zoom-controller`
+- `quadcopter`
+- `motor-driver`
+- `nabik`
+
+The site remains fully static and can be served directly from GitHub Pages.
