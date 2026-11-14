@@ -282,7 +282,7 @@ const portfolioImages = {
       alt: '3d Drawing',
         },
         {
-      src: 'assets/images/quadcopter/CAD Model.png',
+      src: 'assets/images/quadcopter/cad model.png',
       alt: 'CAD Model',
         },
         {
