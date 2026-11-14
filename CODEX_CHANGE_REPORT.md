@@ -10,6 +10,10 @@ Latest updates: added visible hero portrait dimensions, matched the experience h
 
 Project image follow-up: the existing project dialogs remain the primary detail views. Configured images now stay bounded inside their media frames, UAV `gallery-01.jpg` is mapped as the featured image, and empty configured galleries are suppressed.
 
+Project subsection image update: all existing project image placeholders are now connected to project/category arrays in the centralized mapping. CAD, electronics, mechanical, wiring, schematic, and PCB categories support multiple images while empty arrays preserve their original placeholders.
+
+Project video update: added optional `videos[]` arrays to the existing per-project configuration and a renderer for native HTML5 players. Empty arrays hide the entire Video section; no actual video files are present yet, so all projects currently hide it.
+
 ## 2. Files Modified
 
 ### index.html
@@ -22,6 +26,14 @@ Project image follow-up: the existing project dialogs remain the primary detail 
 - Added visible recommended pixel dimensions and aspect ratios to project image placeholders.
 - Mapped the existing UAV `assets/images/uav/gallery-01.jpg` as the UAV's featured image inside its existing project dialog and as the optional project-card thumbnail.
 - Kept configured project images inside bounded media placeholders in the existing dialogs; empty `gallery` arrays hide only the matching gallery section.
+- Added `data-project-image-slot` markers to all 31 existing project image frames and connected them to each project's centralized configuration.
+- Added project-specific arrays for `cad`, `electronics`, `mechanical`, `wiring`, `schematic`, and `pcb`, for the matching subsections already present in the dialogs.
+- Preserved labeled placeholders for empty subsection arrays; configured arrays add or remove frames to match their entries and restore a clean fallback when an image fails.
+- Updated the image placement guide with the new subsection mappings and exact CAD/Electronics examples.
+- Added optional centralized `videos[]` configuration and marked the existing project Video sections for rendering from that data.
+- Added native video players with controls, inline playback, metadata preload, no autoplay, extension-based MIME types for MP4/WebM/OGV/OGG, optional posters, titles, and multiple videos per project.
+- Hides the complete Video section when no video is configured or all paths are unsupported. Runtime load failures are logged and remove the failed player; the section hides if none remain. A poster failure removes only the poster.
+- Updated `IMAGE_PLACEMENT_GUIDE.txt` with video folders, supported formats, `videos[]` examples, optional poster/multiple-video behavior, and missing/invalid-video handling.
 - Added a visible 1200 × 1500 px (4:5 portrait) recommendation beneath the hero/profile image.
 - Added an Achievements section immediately after Experience & Activities.
 - Added the `assets/images/achievements/` folder and a JavaScript image registration list.
@@ -110,7 +122,7 @@ The six-card content reflects the updated list: embedded programming, PCB/electr
 - GitHub link: preserved and verified.
 - LinkedIn link: preserved and verified.
 - WhatsApp link: preserved and verified.
-- Projects: all five project cards preserved.
+- Projects: all five cards were preserved at that earlier stage; the latest update below consolidates the two drone subsystem cards into four current cards.
 - Project overlays: all five overlay elements preserved.
 - Project detail scrolling: verified as internally scrollable.
 - Close buttons: preserved.
@@ -135,7 +147,7 @@ The six-card content reflects the updated list: embedded programming, PCB/electr
 - Verified responsive skill-grid column counts and absence of horizontal overflow.
 - Visually inspected desktop and mobile card rendering.
 - Verified an existing project overlay opens, scrolls internally, locks body scrolling, and closes with Escape.
-- Verified the five project cards and five project dialogs remain present.
+- Earlier baseline verification found five project cards and five project dialogs; the latest update below merges the quadcopter and motor-driver views into one card and dialog.
 - Verified GitHub, LinkedIn, WhatsApp, and résumé paths.
 - Checked the browser console for errors and warnings; none were reported.
 
@@ -144,6 +156,10 @@ For this follow-up, source edits were reviewed and the existing behavior remains
 For the center-focused carousel update, `node --check script.js` passed, CSS braces were balanced (214 opening / 214 closing), all three configured achievement image files and required section elements were confirmed present, and obsolete marquee/clone code was confirmed absent. Browser testing was attempted at the local preview URL, but the browser could not connect to it; therefore viewport rendering at 1440px, 1024px, 768px, and 390px, live autoplay and input interactions, reduced-motion behavior, and browser console checks remain unverified for this update.
 
 For the project-image follow-up, `node --check script.js` passed, CSS braces were balanced, the configured UAV image file was confirmed to exist, and source checks confirmed the native UAV dialog opener and positioned media frames are present. No browser testing was performed for this follow-up.
+
+For the project-subsection mapping update, `node --check script.js` passed; CSS brace balance (215/215), all 31 image placeholders matched their 31 slot markers, project keys, subsection group names, and the existing UAV main-image path were checked in source. Browser interaction and responsive rendering were not tested for this update.
+
+For the project-video update, source checks confirm five marked Video sections, five empty `videos` arrays, and MIME mappings for MP4/WebM/OGV/OGG. JavaScript syntax and CSS brace balance were checked. A Node DOM simulation verified hidden empty sections, native player options, multiple-video behavior, individual/all load-error handling, and invalid-extension handling. No actual video file exists in `assets/videos/`, so valid playback and mobile rendering could not be browser-tested.
 
 ## 9. Known Issues / Concerns
 
@@ -228,6 +244,36 @@ uav: {
 },
 ```
 
+### Project Detail Subsection Image Slots
+
+- Added explicit `data-project-image-slot` markers to all 31 existing project image frames and connected them to `portfolioImages.projects`.
+- The UAV `cad[]` maps to its two CAD/Airframe frames; `electronics[]` maps to its Electronics frame.
+- Other existing groups are mapped by project: zoom controller `electronics[]` and `mechanical[]`; quadcopter `electronics[]` and `wiring[]`; motor driver `schematic[]` and `pcb[]`; Nabik `cad[]` and `electronics[]`.
+- All arrays support multiple images. Additional frames are inserted in the matching group; surplus pre-existing frames are removed when a non-empty array has fewer entries. Empty non-gallery arrays preserve their original labeled placeholders. Empty `gallery[]` hides the empty Media Gallery section.
+- Invalid or missing configured files log an error and restore the slot's placeholder/fallback. The project dialog and all non-image content remain intact.
+- Updated `IMAGE_PLACEMENT_GUIDE.txt` with exact keys, folder examples, filename patterns, and subsection array examples.
+- Status: Main, gallery, CAD, electronics, mechanical, wiring, schematic, and PCB image slots are `[ACTIVE]`. Video rendering is `[ACTIVE]` and optional; all current projects have empty `videos[]` arrays and hide the whole Video section. Testing/results sections remain text-only.
+
+### Project Videos
+
+- Video support is `[ACTIVE]` and configured separately from image arrays using each project's `videos[]` property.
+- Files belong in `assets/videos/<project-folder>/`; accepted extensions are MP4, WebM, OGV, and OGG. Each entry may include `src`, `title`, and optional `poster`.
+- Multiple videos render as native HTML5 players in the existing project dialog with controls, inline playback, metadata preload, and no autoplay.
+- If the array is empty or absent, the entire Video section is hidden. Invalid paths are logged; failed players are removed and the section hides if all fail. Invalid posters are removed without affecting video playback.
+- No real project videos are currently present, so each project is configured with `videos: []` and its Video section is hidden.
+
+Example entry for a real UAV file (add only after the file exists):
+
+```js
+videos: [
+  {
+    src: 'assets/videos/uav/demo.mp4',
+    title: 'Fixed-Wing UAV Demonstration',
+    poster: 'assets/images/uav/video-poster.jpg',
+  },
+],
+```
+
 ### Naming
 
 Use lowercase filenames with hyphens, such as `main.png`, `gallery-01.webp`, or `achievement-02.jpg`. Avoid spaces and inconsistent capitalization. Existing filenames do not need to be renamed; use their exact path in the configuration.
@@ -256,3 +302,50 @@ For a new project detail image, put it in that project's existing folder and add
 - Add real project photographs and CAD or PCB imagery to the existing project media folders.
 - Add demonstration videos to the prepared HTML5 video locations.
 - Expand project overlays with verified engineering case-study content as material becomes available.
+
+## Lightbox Interaction Boundary Update
+
+- Project overview card images no longer open the lightbox. Their click events continue to the existing project-card handler, so clicking anywhere on a card opens its project dialog.
+- Configured images inside project detail dialogs still open the shared full-size lightbox. This includes images inserted dynamically through the existing project image configuration and carousel images placed inside a project dialog.
+- Achievement carousel and profile images retain their existing lightbox behavior. Carousel clicks continue to reach the carousel's own selection handler.
+- No image paths, project image arrays, project dialog markup, or hover styling were changed for this update.
+- Validation: `node --check script.js` and `git diff --check` passed. Source inspection confirmed the project-card click handler and skill-card hover selector remain present. Browser interaction testing was not available in this run.
+
+## Drone Project Merge and 3D Design Showcase
+
+### Files updated
+
+- `index.html`: replaced the separate Custom Quadcopter Flight Controller and MOSFET Motor Driver PCB cards with one **Custom Drone Control System** card. Combined their existing detail content in the same `quad-dialog`, with separate Flight Controller and Motor Driver subsections. The existing media-slot keys remain `quadcopter` and `motorDriver`, so their image arrays still attach to their original subsystem. The project grid now has four cards and four project dialogs. Added the 3D Design Showcase section after Projects and before Technical Skills; it sits before Achievements in the page flow.
+- `script.js`: the shared image and video mount code now maps both drone subsystem keys into `quad-dialog`. Added the centralized `portfolioImages.designShowcase` array and a data-driven focused carousel that reuses the Achievements card styling, position/scale treatment, slide timing, pause behavior, keyboard and touch navigation, reduced-motion handling, and two-step click/lightbox interaction. Empty and missing-image behavior follows the existing carousel conventions.
+- `styles.css`: added only subtle subsystem separation and matching understated image-dimension guidance for the new showcase.
+- `IMAGE_PLACEMENT_GUIDE.txt`: updated the former dialog references and documented the new showcase folder and registration pattern.
+- `assets/images/3d-designs/.gitkeep`: created the dedicated empty showcase folder. No design images were fabricated or added.
+
+### Adding a 3D design
+
+Place the image in `assets/images/3d-designs/` and add one `{ src, alt }` entry to `portfolioImages.designShowcase` in `script.js`. An existing entry is:
+
+```js
+{ src: 'assets/images/3d-designs/pixieb.png', alt: 'Base For Pixie Bot' },
+```
+
+Recommended image size is **1200 × 800 px (3:2 landscape)**. Each entry generates a carousel tile automatically. The first click on a side tile focuses it; clicking the focused tile opens that image in the shared full-size lightbox. No project dialog is created for showcase images.
+
+### Validation performed
+
+- `node --check script.js` passed.
+- `git diff --check` passed; Git displayed line-ending conversion notices for edited files.
+- Python's HTML parser completed without exceptions; source checks found 32 unique IDs, four main project cards, four detail dialogs, exactly one Custom Drone Control System card, no remaining `pcb-dialog` reference in the site code, both subsystem media-slot groups in the combined dialog, both subsystem video sections, and the showcase section before Achievements.
+- CSS brace counts balance (241 opening / 241 closing). Four local HTML asset references and 24 configured image paths were confirmed to exist.
+- At initial setup, verified the new showcase folder and empty `designShowcase` list displayed the empty-state message without fake media. The subsequent tile update below reflects the design files now present in that folder.
+- Browser-based interaction, console, and desktop/tablet/mobile rendering were not run in this update. The combined-dialog image/video mounting, carousel autoplay/touch behavior, lightbox layering, and viewport appearance therefore still need live-browser verification.
+
+## Miscellaneous Design Carousel Tiles
+
+- Kept the showcase as the existing horizontally moving, center-focused carousel. Each tile now contains its image and a visible headline generated directly from the same descriptive `alt` value used on the image.
+- Added showcase-only card styling that follows the main Projects surface, border, typography, and spacing language while preserving the shared carousel positioning, focus enlargement, slide transition, responsive sizing, and reduced-motion behavior. Achievements styling and its content were not changed.
+- Clicking a background tile continues to focus it first. Clicking the active tile or its headline opens the existing global lightbox; the two-step routing does not assign the showcase tile a project dialog. The lightbox continues restoring its captured scroll position and focus target on close.
+- Corrected the rotor image path capitalization to match `assets/images/3d-designs/helo-rotor.png` for case-sensitive hosting.
+- Updated `IMAGE_PLACEMENT_GUIDE.txt` to document that `alt` is the visible headline and to show an existing real design entry as the configuration pattern.
+- Current `portfolioImages.designShowcase` contains five entries: Pixie Bot base, Pixie Bot connector, RC helicopter swashplate concept, claw, and conceptual autonomous passenger-carrier design. Each source path was checked against the folder.
+- Validation: `node --check script.js` and `git diff --check` passed; CSS braces balance. Source inspection verified title generation from `alt`, design-only active-image routing, separate carousel roots, and no project-dialog association. A local Brave preview showed all five image/title tiles; clicking a background tile selected it without opening a dialog, clicking a focused tile opened the shared lightbox, and closing returned to the showcase scroll region. The carousel continued advancing during preview, so persistence of the exact slide under pause was not verified. Browser console inspection and 1440/1024/768/390 viewport checks were not performed.
